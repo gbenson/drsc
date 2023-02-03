@@ -1,3 +1,4 @@
+import requests
 import shelve
 import os
 
@@ -7,6 +8,7 @@ class Scraper:
         if state is None:
             state = {}
         self.state = state
+        self.session = requests.Session()
 
     @property
     def website(self):
@@ -33,9 +35,22 @@ class Scraper:
             return result
         return f"https://{self.website}/draft-detail/{self.draft_id}/"
 
+    @property
+    def draft_detail(self):
+        result = self.state.get("draft_detail", None)
+        if result is None:
+            result = self.session.get(self.draft_detail_url)
+            self.state["draft_detail"] = result
+        return result
+
     def scrape(self, draft_id):
         self.draft_id = draft_id
-        return self.draft_detail_url
+        detail = self.draft_detail
+        print(detail.url)
+        print(detail.headers)
+        print(detail.text)
+        #  self._fetch_draft_detail()
+        return dir(self.draft_detail)  # _url
 
 
 def scrape(draft_id, state=None):
