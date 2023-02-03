@@ -9,6 +9,12 @@ class Scraper:
         self.state = state
 
     @property
+    def website(self):
+        result = list("handwaving.net")
+        result.insert(5, "e")
+        return "".join(result)
+
+    @property
     def draft_id(self):
         return self.state["draft_id"]
 
@@ -20,8 +26,16 @@ class Scraper:
         elif saved_value != value:
             raise ValueError(f"{value} != {saved_value}")
 
+    @property
+    def draft_detail_url(self):
+        result = self.state.get("draft_detail_url", None)
+        if result is not None:
+            return result
+        return f"https://{self.website}/draft-detail/{self.draft_id}/"
+
     def scrape(self, draft_id):
         self.draft_id = draft_id
+        return self.draft_detail_url
 
 
 def scrape(draft_id, state=None):
